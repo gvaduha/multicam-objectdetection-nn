@@ -1,0 +1,12 @@
+{
+    "nn": {
+        "module": "fakenn",
+        "class":  "FakeNn"
+    },
+    "cams": [
+        {
+            "id": 1,
+            "uri": "rtsp://admin:admin@bdcam2/h264"
+        }
+    ]
+}
