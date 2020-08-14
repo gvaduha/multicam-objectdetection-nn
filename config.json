@@ -1,9 +1,20 @@
 {
     "nn": {
-        "module": "fakenn",
-        "class":  "FakeNn"
+        "module": "fakes",
+        "class": "FakeNn"
+    },
+    "resultsink": {
+        "module": "fakes",
+        "class": "PrintResultSink"
     },
     "cams": [
-        { "id": 1, "uri": "rtsp://admin:admin@cam1/h264" }
+        {
+            "id": 1,
+            "uri": "rtsp://admin:admin@cam1/h264"
+        },
+        {
+            "id": 2,
+            "uri": "rtsp://admin:admin@cam2"
+        }
     ]
 }

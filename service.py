@@ -11,22 +11,23 @@ class Service:
     
     def __init__(self, config):
         self._stopEvent = False
-        cams, objDetector = Service._init(config)
-        self._mainthread = Thread(target=self._mainLoop, args=(cams, objDetector))
+        cams, objDetector, detectionResultSubscriber = Service._init(config)
+        self._mainthread = Thread(target=self._mainLoop, args=(cams, objDetector, detectionResultSubscriber))
         self._mainthread.start()
     
     @staticmethod
     def _init(config):
         nn = getattr(__import__(config['nn']['module']), config['nn']['class'])()
+        detectionResultSubscriber = getattr(__import__(config['resultsink']['module']), config['resultsink']['class'])()
         objDetector = ObjectDetector(nn)
         cams = [VideoCapture(c['id'],c['uri']) for c in config['cams']]
         [Thread(target=c.start, args=()).start() for c in cams]
-        return (cams, objDetector)
+        return (cams, objDetector, detectionResultSubscriber)
 
     def stop(self):
         self._stopEvent = True
 
-    def _mainLoop(self, cams, objDetector):
+    def _mainLoop(self, cams, objDetector, detectionResultSubscriber):
         while (not self._stopEvent):
             detectedObjects = []
             for c in cams:
@@ -40,7 +41,7 @@ class Service:
                     Thread(target=c.start, args=()).start()
 
             dset = objDetector.getDetectedObjectsFrame()
-            print(dset)
+            detectionResultSubscriber.pushDetectedObjectsFrame(dset)
 
     def join(self):
         self._mainthread.join()
