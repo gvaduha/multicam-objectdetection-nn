@@ -8,8 +8,8 @@ class VideoCapture:
     You can either check isRunning before call currentFrame or check currentFrame grabbed value
     """
 
-    def __init__(self, id, uri):
-        self.id = id
+    def __init__(self, vsid, uri):
+        self.vsid = vsid
         self.uri = uri
         self._capture = cv2.VideoCapture(uri)
         self._grabbed = False
@@ -17,7 +17,7 @@ class VideoCapture:
         self._started = False
         self._stopping = False
 
-    def isRunning():
+    def isRunning(self):
         return self._started
 
     def start(self):
@@ -40,4 +40,4 @@ class VideoCapture:
                 self.stop()
 
     def currentFrame(self):
-        return (self._grabbed, self._frame, self.id)
+        return (self._grabbed, self._frame, self.vsid)

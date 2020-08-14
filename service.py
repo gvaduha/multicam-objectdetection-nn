@@ -23,7 +23,7 @@ class Service:
         [Thread(target=c.start, args=()).start() for c in cams]
         return (cams, objDetector)
 
-    def stop():
+    def stop(self):
         self._stopEvent = True
 
     def _mainLoop(self, cams, objDetector):
@@ -36,7 +36,7 @@ class Service:
                     frame = e.CapturedFrame(camid, dt.datetime.now(), img)
                     objDetector.pushImage(frame)
                 else:
-                    c = VideoCapture(c.id, c.uri)
+                    c = VideoCapture(c.vsid, c.uri)
                     Thread(target=c.start, args=()).start()
 
             dset = objDetector.getDetectedObjectsFrame()

@@ -2,21 +2,23 @@ import signal
 import json
 import service as s
 
-service: s.Service = None
+svc: s.Service = None
 
 def stopHandler(signum, frame):
+    global svc
     print('Stopping...')
-    if (service):
-        service.stop()
+    if (svc):
+        svc.stop()
 
 def main():
+    global svc
     with open('config.json') as cfgfile:
         config = json.load(cfgfile)
 
+    print('Initializing...')
+    svc = s.Service(config)
     print('Press ctrl-c to stop')
-
-    service = s.Service(config)
-    service.join()
+    svc.join()
 
 
 if __name__ == "__main__":

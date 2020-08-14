@@ -18,9 +18,9 @@ class ObjectDetector:
         self._frames = q.Queue()
         self._stopSignal = False
         self._detectedObjectSets: List[e.DetectedObjectSet] = []
-        self._t = Thread(target=self._detectObjectsLoop, args=()).start()
+        Thread(target=self._detectObjectsLoop, args=()).start()
 
-    def stop():
+    def stop(self):
         self._stopSignal = True
 
     def _detectObjectsLoop(self):

@@ -7,7 +7,7 @@ class CapturedFrame:
         self.img = img
 
     def __str__(self):
-        return f"[{self.vsid}@{self.ts}] {self.img}"
+        return f"[{self.vsid}@{self.timestamp}] {self.img}"
 
 
 class BoundingBox:
@@ -38,11 +38,11 @@ class DetectedObjectSet:
 
     def __str__(self):
         dobjs = '; '.join(str(x) for x in self.dobjs)
-        return f"[{self.vsid}@{self.ts}] [dobjs}]"
+        return f"[{self.vsid}@{self.ts}] [{dobjs}]"
 
 
 class DetectedObjectsFrame:
-    def __init__(self, srvid, timestamp, detectedsets: DetectedObjectSet):
+    def __init__(self, srvid, timestamp, detectedsets: List[DetectedObjectSet]):
         self.srvid = srvid
         self.ts = timestamp
         self.dsets = detectedsets
