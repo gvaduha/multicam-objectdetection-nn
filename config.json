@@ -4,9 +4,6 @@
         "class":  "FakeNn"
     },
     "cams": [
-        {
-            "id": 1,
-            "uri": "rtsp://admin:admin@bdcam2/h264"
-        }
+        { "id": 1, "uri": "rtsp://admin:admin@cam1/h264" }
     ]
 }
