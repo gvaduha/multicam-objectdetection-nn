@@ -4,9 +4,10 @@ Main service module
 # pylint: disable=C0103, C0301
 
 from threading import Thread
+import datetime as dt
+
 from videocapture import VideoCapture
 from objdetector import ObjectDetector
-import datetime as dt
 import entities as e
 
 class Service:
