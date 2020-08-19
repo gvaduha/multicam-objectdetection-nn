@@ -6,14 +6,14 @@ Main service module
 from threading import Thread
 from videocapture import VideoCapture
 from objdetector import ObjectDetector
-import entities as e
 import datetime as dt
+import entities as e
 
 class Service:
     """
     Main app class with control loop
     """
-    
+
     def __init__(self, config):
         """
         Class initialization. Automatically starts event service loop thread as its last statement
@@ -29,7 +29,7 @@ class Service:
         nn = getattr(__import__(config['nn']['module']), config['nn']['class'])()
         detectionResultSubscriber = getattr(__import__(config['resultsink']['module']), config['resultsink']['class'])()
         objDetector = ObjectDetector(nn)
-        cams = [VideoCapture(c['id'],c['uri']) for c in config['cams']]
+        cams = [VideoCapture(c['id'], c['uri']) for c in config['cams']]
         _ = [Thread(target=c.start, args=()).start() for c in cams]
         return (cams, objDetector, detectionResultSubscriber)
 
