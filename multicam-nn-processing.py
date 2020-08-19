@@ -1,3 +1,8 @@
+"""
+main module
+"""
+# pylint: disable=C0103,C0116,W0603,W0613
+
 import signal
 import json
 import service as s
@@ -7,7 +12,7 @@ svc: s.Service = None
 def stopHandler(signum, frame):
     global svc
     print('Stopping...')
-    if (svc):
+    if svc:
         svc.stop()
 
 def main():

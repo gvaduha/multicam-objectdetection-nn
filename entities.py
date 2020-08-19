@@ -1,6 +1,14 @@
+"""
+structures to hold domain objects
+"""
+# pylint: disable=C0103,R0903
+
 from typing import List
 
 class CapturedFrame:
+    """
+    Image with its source and timestamp
+    """
     def __init__(self, videostreamid, timestamp, img):
         self.vsid = videostreamid
         self.timestamp = timestamp
@@ -11,6 +19,9 @@ class CapturedFrame:
 
 
 class BoundingBox:
+    """
+    Detected object bounding box
+    """
     def __init__(self, left, top, right, bottom):
         self.l = left
         self.t = top
@@ -22,6 +33,9 @@ class BoundingBox:
 
 
 class DetectedObject:
+    """
+    Detected object structure (class, probability, bounding box)
+    """
     def __init__(self, clazz, probability, bbox: BoundingBox):
         self.c = clazz
         self.p = probability
@@ -31,6 +45,9 @@ class DetectedObject:
         return f"c:{self.c},p:{self.p},bbox:{self.bbox}"
 
 class DetectedObjectSet:
+    """
+    List of detected objects with their source and timestamp
+    """
     def __init__(self, videostreamid, timestamp, detectedobjs: List[DetectedObject]):
         self.vsid = videostreamid
         self.ts = timestamp
@@ -42,6 +59,9 @@ class DetectedObjectSet:
 
 
 class DetectedObjectsFrame:
+    """
+    List of all detected objects from all sources for a given timestamp
+    """
     def __init__(self, srvid, timestamp, detectedsets: List[DetectedObjectSet]):
         self.srvid = srvid
         self.ts = timestamp
