@@ -3,7 +3,7 @@ Video capture module. Run capture from uri
 Disabled:
   error E1101: Module 'cv2' has no 'VideoCapture' member [E:no-member]
 """
-# pylint: disable=C0103,E1101
+# pylint: disable=C0103,E1101,R0902
 
 from threading import Thread
 import cv2
@@ -15,11 +15,12 @@ class VideoCapture:
     You can either check isRunning before call currentFrame or check currentFrame grabbed value
     """
 
-    def __init__(self, vsid, uri):
+    def __init__(self, vsid, uri, logger):
         """
         vsid: video source id that current image frame lable with
         uri: video source uri
         """
+        self._logger = logger
         self.vsid = vsid
         self.uri = uri
         self._capture = cv2.VideoCapture(uri)
@@ -42,6 +43,7 @@ class VideoCapture:
             return self
         Thread(target=self._captureLoop, args=()).start()
         self._started = True
+        self._logger.debug(f'VideoCapture @{self.vsid}:{self.uri} started')
         return self
 
     def stop(self):
@@ -49,6 +51,7 @@ class VideoCapture:
         stop capture thread
         """
         if self._started:
+            self._logger.debug('VideoCapture stopping...')
             self._stopping = True
             self._started = False
             self._grabbed = False
@@ -58,6 +61,7 @@ class VideoCapture:
             (self._grabbed, self._frame) = self._capture.read()
             if not self._grabbed:
                 self.stop()
+        self._logger.debug(f'VideoCapture @{self.vsid}:{self.uri} stopped')
 
     def currentFrame(self):
         """

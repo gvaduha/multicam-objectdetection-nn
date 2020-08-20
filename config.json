@@ -7,13 +7,14 @@
         "module": "fakes",
         "class": "PrintResultSink"
     },
+    "runintervalsec": 1.0,
     "cams": [
         {
-            "id": 1,
+            "vsid": 1,
             "uri": "rtsp://admin:admin@cam1/h264"
         },
         {
-            "id": 2,
+            "vsid": 2,
             "uri": "rtsp://admin:admin@cam2"
         }
     ]

@@ -14,35 +14,40 @@ import entities as e
 class ObjectDetector:
     """
     Facade to real object detection neural network
-    nnclass argument should implement following interfact
-     * detectObjects(frame: e.CapturedFrame) -> e.DetectedObjectSet
     """
 
-    def __init__(self, nnclass):
+    def __init__(self, nnclass, logger):
         """
-        nnclass is neural network implementation class with function:
+        nnclass argument should implement following interface
+         * __init__(logger)
          * detectObjects(frame: e.CapturedFrame) -> e.DetectedObjectSet
+         * stop()
         """
         self._realnn = nnclass
+        self._logger = logger
         self._frames = q.Queue()
         self._stopSignal = False
         self._detectedObjectSets: List[e.DetectedObjectSet] = []
         Thread(target=self._detectObjectsLoop, args=()).start()
+        self._logger.debug('ObjectDetector started')
 
     def stop(self):
         """
         stops detection module
         """
+        self._logger.debug('ObjectDetector stopping...')
         self._stopSignal = True
+        self._realnn.stop()
 
     def _detectObjectsLoop(self):
         while not self._stopSignal:
             try:
-                frame: e.CapturedFrame = self._frames.get(timeout=1000)
+                frame: e.CapturedFrame = self._frames.get(timeout=1)
                 doset = self._realnn.detectObjects(frame)
                 self._detectedObjectSets.append(doset)
             except q.Empty:
                 pass
+        self._logger.debug('ObjectDetector stopped')
 
     def pushImage(self, frame: e.CapturedFrame):
         """
