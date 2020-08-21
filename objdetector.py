@@ -4,7 +4,7 @@ Object detector facade module. Run object detection in NN
 # pylint: disable=C0103
 
 #import numpy as np
-from threading import Thread
+from threading import Thread, Event
 from typing import List
 import datetime as dt
 import time
@@ -27,27 +27,31 @@ class ObjectDetector:
         self._logger = logger
         self._frames = q.Queue()
         self._stopSignal = False
+        self._processingEnabled = Event()
+        self._processingEnabled.set()
         self._detectedObjectSets: List[e.DetectedObjectSet] = []
         Thread(target=self._detectObjectsLoop, args=()).start()
-        self._logger.debug('ObjectDetector started')
+        self._logger.info('ObjectDetector started')
 
     def stop(self):
         """
         stops detection module
         """
-        self._logger.debug('ObjectDetector stopping...')
+        self._logger.info('ObjectDetector stopping...')
         self._stopSignal = True
+        #self._processingEnabled.set()
         self._realnn.stop()
 
     def _detectObjectsLoop(self):
         while not self._stopSignal:
             try:
                 frame: e.CapturedFrame = self._frames.get(timeout=1)
+                self._processingEnabled.wait()
                 doset = self._realnn.detectObjects(frame)
                 self._detectedObjectSets.append(doset)
             except q.Empty:
                 pass
-        self._logger.debug('ObjectDetector stopped')
+        self._logger.info('ObjectDetector stopped')
 
     def pushImage(self, frame: e.CapturedFrame):
         """
@@ -59,9 +63,11 @@ class ObjectDetector:
         """
         returns current list of all detected objects in DetectedObjectsFrame
         """
-        while not self._frames.empty():
+        self._processingEnabled.clear()
+        while not self._frames.empty:
             time.sleep(0.1)
 
         doframe = e.DetectedObjectsFrame("", dt.datetime.now(), self._detectedObjectSets)
         self._detectedObjectSets = []
+        self._processingEnabled.set()
         return doframe

@@ -43,7 +43,7 @@ class VideoCapture:
             return self
         Thread(target=self._captureLoop, args=()).start()
         self._started = True
-        self._logger.debug(f'VideoCapture @{self.vsid}:{self.uri} started')
+        self._logger.info(f'VideoCapture @{self.vsid}:{self.uri} started')
         return self
 
     def stop(self):
@@ -51,7 +51,7 @@ class VideoCapture:
         stop capture thread
         """
         if self._started:
-            self._logger.debug('VideoCapture stopping...')
+            self._logger.info('VideoCapture stopping...')
             self._stopping = True
             self._started = False
             self._grabbed = False
@@ -61,7 +61,7 @@ class VideoCapture:
             (self._grabbed, self._frame) = self._capture.read()
             if not self._grabbed:
                 self.stop()
-        self._logger.debug(f'VideoCapture @{self.vsid}:{self.uri} stopped')
+        self._logger.info(f'VideoCapture @{self.vsid}:{self.uri} stopped')
 
     def currentFrame(self):
         """

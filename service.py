@@ -22,24 +22,27 @@ class Service:
         config: json for instantiation of neural network and detection results sink classes
         """
         self._stopEvent = False
+        self._detectorFree = True;
         self._logger = logger
         self._initfromconfig(config)
         self._mainthread = threading.Thread(target=self._mainLoop)
         self._mainthread.start()
 
     def _initfromconfig(self, config):
-        nn = getattr(__import__(config['nn']['module']), config['nn']['class'])(self._logger)
-        self._logger.debug(f'Initialize neural network: {type(nn).__name__}')
-        self._objDetector = ObjectDetector(nn, self._logger)
-
-        self._detectionResultSubscriber = getattr(__import__(config['resultsink']['module']), config['resultsink']['class'])(self._logger)
-        self._logger.debug(f'Initialize result subscriber: {type(self._detectionResultSubscriber).__name__}')
+        modulesconfig = config['modules']
 
         self._cams = [VideoCapture(c['vsid'], c['uri'], self._logger) for c in config['cams']]
-        self._logger.debug(f"Video sources: {[f'{c.vsid}:{c.uri}' for c in self._cams]}")
+        self._logger.info(f"Video sources: {[f'{c.vsid}:{c.uri}' for c in self._cams]}")
+
+        self._detectionResultSubscriber = getattr(__import__(config['resultsink']['module']), config['resultsink']['class'])(modulesconfig.get(config['resultsink']['class'], None), self._logger)
+        self._logger.info(f'Initialize result subscriber: {type(self._detectionResultSubscriber).__name__}')
+
+        nn = getattr(__import__(config['nn']['module']), config['nn']['class'])(modulesconfig.get(config['nn']['class'], None), self._logger)
+        self._logger.info(f'Initialize neural network: {type(nn).__name__}')
+        self._objDetector = ObjectDetector(nn, self._logger)
 
         self._runinterval = config['runintervalsec'];
-        self._logger.debug(f"Service processing interval: {self._runinterval} sec")
+        self._logger.info(f"Service processing interval: {self._runinterval} sec")
 
         _ = [threading.Thread(target=c.start, args=()).start() for c in self._cams]
 
@@ -47,7 +50,7 @@ class Service:
         """
         stops service loop
         """
-        self._logger.debug('Service stopping...')
+        self._logger.info('Service stopping...')
         self._stopEvent = True
         self._objDetector.stop()
         self._detectionResultSubscriber.stop()
@@ -58,10 +61,15 @@ class Service:
     def _mainLoop(self):
         ticker = threading.Event()
         while not ticker.wait(self._runinterval) and not self._stopEvent:
-            self._detectionCycle()
-        self._logger.debug('Service stopped')
+            if self._detectorFree:
+                self._detectionCycle()
+            else:
+                self._logger.warning('Detector is busy, skipping detection!')
+
+        self._logger.info('Service stopped')
 
     def _detectionCycle(self):
+        self._detectorFree = False
         for c in self._cams:
             if c.isRunning:
                 (hasFrame, img, camid) = c.currentFrame()
@@ -74,6 +82,7 @@ class Service:
 
         dset = self._objDetector.getDetectedObjectsFrame()
         self._detectionResultSubscriber.pushDetectedObjectsFrame(dset)
+        self._detectorFree = True
 
     def join(self):
         """

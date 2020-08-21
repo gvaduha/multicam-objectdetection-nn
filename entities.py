@@ -4,8 +4,27 @@ structures to hold domain objects
 # pylint: disable=C0103,R0903
 
 from typing import List
+import datetime
+import json
 
-class CapturedFrame:
+class EntityTag:
+    """
+    Tag class for EntitiesJsonSerializer
+    """
+
+class EntitiesJsonSerializer(json.JSONEncoder):
+    """
+    Serialization for Entity classes (derived from EntityTag)
+    but mostly for shitty python datetime support
+    """
+    def default(self, o):
+        if isinstance(o, EntityTag):
+            return o.__dict__
+        if isinstance(o, (datetime.date, datetime.datetime)):
+            return o.isoformat()
+        return json.JSONEncoder.default(self, o)
+
+class CapturedFrame(EntityTag):
     """
     Image with its source and timestamp
     """
@@ -18,7 +37,7 @@ class CapturedFrame:
         return f"[{self.vsid}@{self.timestamp}] {self.img}"
 
 
-class BoundingBox:
+class BoundingBox(EntityTag):
     """
     Detected object bounding box
     """
@@ -32,7 +51,7 @@ class BoundingBox:
         return f"({self.t},{self.l}):({self.r},{self.b})"
 
 
-class DetectedObject:
+class DetectedObject(EntityTag):
     """
     Detected object structure (class, probability, bounding box)
     """
@@ -44,7 +63,7 @@ class DetectedObject:
     def __str__(self):
         return f"c:{self.c},p:{self.p},bbox:{self.bbox}"
 
-class DetectedObjectSet:
+class DetectedObjectSet(EntityTag):
     """
     List of detected objects with their source and timestamp
     """
@@ -58,7 +77,7 @@ class DetectedObjectSet:
         return f"[{self.vsid}@{self.ts}] [{dobjs}]"
 
 
-class DetectedObjectsFrame:
+class DetectedObjectsFrame(EntityTag):
     """
     List of all detected objects from all sources for a given timestamp
     """

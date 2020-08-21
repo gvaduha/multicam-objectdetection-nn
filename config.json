@@ -5,9 +5,14 @@
     },
     "resultsink": {
         "module": "fakes",
-        "class": "PrintResultSink"
+        "class": "WriteJsonResultSink"
     },
     "runintervalsec": 1.0,
+    "modules": {
+        "WriteJsonResultSink": {
+            "file": "./results.log"
+        }
+    },
     "cams": [
         {
             "vsid": 1,
