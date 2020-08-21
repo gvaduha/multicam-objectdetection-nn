@@ -8,13 +8,21 @@ Tool has pluggable design. Capture done with opencv, classes for NN under test a
 
 # Pluggable classes
 ## Neural network class interface
- * def __init__(self, config, logger):
- * def detectObjects(self, img) -> e.DetectedObjectSet:
- * def stop(self):
+* def __init__(self, config, logger):
+* def detectObjects(self, img) -> e.DetectedObjectSet:
+* def stop(self):
+
+Available implementations:
+* fakes::FakeNn
+
 ## Envent result processor
 * def __init__(self, config, logger):
 * def pushDetectedObjectsFrame(self, frame: e.DetectedObjectsFrame):
 * def stop(self):
+
+Available implementations:
+* fileresultsink::WriteJsonResultSink
+* webservice::FlaskResultSink
 
 # Config
 [Example](config.js)

@@ -1,26 +1,29 @@
 {
-    "nn": {
-        "module": "fakes",
-        "class": "FakeNn"
+  "nn": {
+    "module": "fakes",
+    "class": "FakeNn"
+  },
+  "resultsink": {
+    "module": "webservice",
+    "class": "FlaskResultSink"
+  },
+  "runintervalsec": 1.0,
+  "modules": {
+    "WriteJsonResultSink": {
+      "file": "./results.log"
     },
-    "resultsink": {
-        "module": "fakes",
-        "class": "WriteJsonResultSink"
+    "FlaskResultSink": {
+      "server": "0.0.0.0:5555"
+    }
+  },
+  "cams": [
+    {
+      "vsid": 1,
+      "uri": "rtsp://admin:admin@cam1/h264"
     },
-    "runintervalsec": 1.0,
-    "modules": {
-        "WriteJsonResultSink": {
-            "file": "./results.log"
-        }
-    },
-    "cams": [
-        {
-            "vsid": 1,
-            "uri": "rtsp://admin:admin@cam1/h264"
-        },
-        {
-            "vsid": 2,
-            "uri": "rtsp://admin:admin@cam2"
-        }
-    ]
+    {
+      "vsid": 2,
+      "uri": "rtsp://admin:admin@cam2"
+    }
+  ]
 }

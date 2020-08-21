@@ -52,6 +52,9 @@ class ObjectDetector:
                 self._detectedObjectSets.append(doset)
             except q.Empty:
                 pass
+            except Exception as exc:
+                self._logger.error(exc)
+
         self._logger.info('ObjectDetector stopped')
 
     def pushImage(self, frame: e.CapturedFrame):
