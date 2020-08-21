@@ -20,7 +20,7 @@ class ObjectDetector:
         """
         nnclass argument should implement following interface
          * __init__(logger)
-         * detectObjects(frame: e.CapturedFrame) -> e.DetectedObjectSet
+         * detectObjects(img) -> e.DetectedObjectSet
          * stop()
         """
         self._realnn = nnclass
@@ -47,7 +47,8 @@ class ObjectDetector:
             try:
                 frame: e.CapturedFrame = self._frames.get(timeout=1)
                 self._processingEnabled.wait()
-                doset = self._realnn.detectObjects(frame)
+                dobjs = self._realnn.detectObjects(frame.img)
+                doset = e.DetectedObjectSet(frame.vsid, frame.timestamp, dobjs)
                 self._detectedObjectSets.append(doset)
             except q.Empty:
                 pass

@@ -9,7 +9,7 @@ Tool has pluggable design. Capture done with opencv, classes for NN under test a
 # Pluggable classes
 ## Neural network class interface
  * def __init__(self, config, logger):
- * def detectObjects(self, frame: e.CapturedFrame) -> e.DetectedObjectSet:
+ * def detectObjects(self, img) -> e.DetectedObjectSet:
  * def stop(self):
 ## Envent result processor
 * def __init__(self, config, logger):
