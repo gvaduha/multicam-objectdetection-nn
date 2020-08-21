@@ -25,6 +25,6 @@ Available implementations:
 * webservice::FlaskResultSink
 
 # Config
-[Example](config.js)
+[Example](config.json)
 
 Pluggable modules gets config tree under "modules"/"modulename" upon __init__
