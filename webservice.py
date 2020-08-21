@@ -40,10 +40,6 @@ class FlaskApp:
         self._app.add_url_rule(endpoint, endpoint, EndpointAction(handler))
 
     def _resultep(self, resp):
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-        print(self._currentresult)
-        print(json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer))
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
         resp.data = json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer)
 
     def run(self, queue, config):
@@ -82,7 +78,7 @@ class FlaskResultSink:
         """
         Stop flask app
         """
-        self._flaskproc.kill()
+        self._flaskproc.terminate()
 
     def pushDetectedObjectsFrame(self, frame: e.DetectedObjectsFrame):
         """
