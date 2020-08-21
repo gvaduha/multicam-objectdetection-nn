@@ -1,10 +1,9 @@
 """
 Main service module
 """
-# pylint: disable=C0103, C0301
+# pylint: disable=C0103,C0301,R0902
 
 import threading
-import time
 import datetime as dt
 
 from videocapture import VideoCapture
@@ -22,7 +21,7 @@ class Service:
         config: json for instantiation of neural network and detection results sink classes
         """
         self._stopEvent = False
-        self._detectorFree = True;
+        self._detectorFree = True
         self._logger = logger
         self._initfromconfig(config)
         self._mainthread = threading.Thread(target=self._mainLoop)
@@ -41,7 +40,7 @@ class Service:
         self._logger.info(f'Initialize neural network: {type(nn).__name__}')
         self._objDetector = ObjectDetector(nn, self._logger)
 
-        self._runinterval = config['runintervalsec'];
+        self._runinterval = config['runintervalsec']
         self._logger.info(f"Service processing interval: {self._runinterval} sec")
 
         _ = [threading.Thread(target=c.start, args=()).start() for c in self._cams]
