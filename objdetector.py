@@ -1,7 +1,7 @@
 """
 Object detector facade module. Run object detection in NN
 """
-# pylint: disable=C0103
+# pylint: disable=C0103,W0703
 
 #import numpy as np
 from threading import Thread, Event

@@ -1,13 +1,14 @@
 """
 Flask result sink app
-thanks to Kostas Pelelis for flask wrappers (https://stackoverflow.com/questions/40460846/using-flask-inside-class)
+thanks to Kostas Pelelis for flask wrappers idea
+(https://stackoverflow.com/questions/40460846/using-flask-inside-class)
 """
 # pylint: disable=C0103,R0903
 
 import json
 import threading
 from multiprocessing import Process, Queue
-from flask import Flask, Response, jsonify
+from flask import Flask, Response
 
 import entities as e
 
@@ -28,6 +29,7 @@ class FlaskApp:
     Flask _app wrapper and implementation of SinkResult interface
     """
     def __init__(self):
+        self._app = None
         self._currentresult = {}
         self._interprocq = None
 
@@ -38,12 +40,11 @@ class FlaskApp:
         self._app.add_url_rule(endpoint, endpoint, EndpointAction(handler))
 
     def _resultep(self, resp):
-       resp.data = json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer)
-        #return jsonify(hello='world')
-        #print(f'************************>{self._currentresult}')
-        #retjson = json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer)
-        #return retjson
-        #return jsonify(self._currentresult)
+        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+        print(self._currentresult)
+        print(json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer))
+        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+        resp.data = json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer)
 
     def run(self, queue, config):
         """
@@ -55,11 +56,11 @@ class FlaskApp:
         self._app.use_reloader = False # to not run on main thread
         self.addEndpoint('/currentresult', self._resultep)
         self._interprocq = queue
-        threading.Thread(target=self._flaskAppResultFeatThread, args=(queue,)).start()
+        threading.Thread(target=self._flaskAppResultFeatThread).start()
         srv = config.get('server', 'localhost:5000').split(':')
         self._app.run(host=srv[0], port=srv[1])
 
-    def _flaskAppResultFeatThread(self, queue):
+    def _flaskAppResultFeatThread(self):
         while True:
             res = self._interprocq.get()
             self._currentresult = res
@@ -73,10 +74,10 @@ class FlaskResultSink:
         self._logger = logger
         self._config = config
         self._interprocq = Queue()
-        self._flaskproc = Process(target=FlaskApp().run, args=(self._interprocq,self._config))
+        self._flaskproc = Process(target=FlaskApp().run, args=(self._interprocq, self._config))
         self._flaskproc.daemon = True
         self._flaskproc.start()
-        
+
     def stop(self):
         """
         Stop flask app
@@ -87,6 +88,4 @@ class FlaskResultSink:
         """
         Implementation of SinkResult interface
         """
-        self._logger.debug(frame)
-        jsonobj = json.dumps(frame, cls=e.EntitiesJsonSerializer)
-        self._interprocq.put(jsonobj)
+        self._interprocq.put(frame)
