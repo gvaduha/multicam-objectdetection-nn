@@ -1,7 +1,7 @@
 """
 Object detector facade module. Run object detection in NN
 """
-# pylint: disable=C0103,W0703
+# pylint: disable=C0103,C0301,W0703
 
 #import numpy as np
 from threading import Thread, Event
@@ -20,7 +20,7 @@ class ObjectDetector:
         """
         nnclass argument should implement following interface
          * __init__(logger)
-         * detectObjects(img) -> e.DetectedObjectSet
+         * detectObjects(img) -> List[e.DetectedObject]
          * stop()
         """
         self._realnn = nnclass
@@ -75,3 +75,18 @@ class ObjectDetector:
         self._detectedObjectSets = []
         self._processingEnabled.set()
         return doframe
+
+    @staticmethod
+    def getDetectedObjectsCollection(nnout, height, width, threshold) -> List[e.DetectedObject]:
+        """
+        nnout in the form of (class, score, bbox)
+        """
+        dobjs: List[e.DetectedObject] = []
+
+        for c, s, bb in nnout:
+            if s < threshold:
+                break
+            dobjs.append(e.DetectedObject(int(c), round(float(s), 2),
+                                          e.BoundingBox(int(bb[0]*height), int(bb[1]*width), int(bb[2]*height), int(bb[3]*width))))
+
+        return dobjs

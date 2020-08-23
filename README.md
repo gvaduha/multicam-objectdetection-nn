@@ -9,11 +9,27 @@ Tool has pluggable design. Capture done with opencv, classes for NN under test a
 # Pluggable classes
 ## Neural network class interface
 * def __init__(self, config, logger):
-* def detectObjects(self, img) -> e.DetectedObjectSet:
+* def detectObjects(self, img) -> List[e.DetectedObject]:
 * def stop(self):
 
 Available implementations:
 * fakes::FakeNn
+  "nn": {
+    "module": "fakes",
+    "class": "FakeNn"
+  },
+
+* tfdetector::TensorFlowDetector
+  "nn": {
+    "module": "tfdetector",
+    "class": "TensorFlowDetector"
+  },
+
+* torchdetector::TorchDetector
+  "nn": {
+    "module": "torchdetector",
+    "class": "TorchDetector"
+  },
 
 ## Envent result processor
 * def __init__(self, config, logger):
@@ -22,7 +38,16 @@ Available implementations:
 
 Available implementations:
 * fileresultsink::WriteJsonResultSink
+  "resultsink": {
+    "module": "fileresultsink",
+    "class": "WriteJsonResultSink"
+  },
+
 * webservice::FlaskResultSink
+  "resultsink": {
+    "module": "webservice",
+    "class": "FlaskResultSink"
+  },
 
 # Config
 [Example](config.json)

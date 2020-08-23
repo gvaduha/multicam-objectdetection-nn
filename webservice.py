@@ -3,11 +3,11 @@ Flask result sink app
 thanks to Kostas Pelelis for flask wrappers idea
 (https://stackoverflow.com/questions/40460846/using-flask-inside-class)
 """
-# pylint: disable=C0103,R0903
+# pylint: disable=C0103,C0301,R0903
 
 import json
 import threading
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Event
 from flask import Flask, Response
 
 import entities as e
@@ -32,6 +32,7 @@ class FlaskApp:
         self._app = None
         self._currentresult = {}
         self._interprocq = None
+        self._lock = None
 
     def addEndpoint(self, endpoint, handler):
         """
@@ -40,13 +41,12 @@ class FlaskApp:
         self._app.add_url_rule(endpoint, endpoint, EndpointAction(handler))
 
     def _resultep(self, resp):
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-        print(self._currentresult)
-        print(json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer))
-        print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-        resp.data = json.dumps(self._currentresult, cls=e.EntitiesJsonSerializer)
+        self._lock.acquire()
+        res = self._currentresult
+        self._lock.release()
+        resp.data = json.dumps(res, cls=e.EntitiesJsonSerializer)
 
-    def run(self, queue, config):
+    def run(self, config: str, queue: Queue, ready: Event):
         """
         Start fuction for a process
         initialization of flask app should be here, trying initialize it
@@ -56,14 +56,19 @@ class FlaskApp:
         self._app.use_reloader = False # to not run on main thread
         self.addEndpoint('/currentresult', self._resultep)
         self._interprocq = queue
+        self._lock = threading.Lock()
         threading.Thread(target=self._flaskAppResultFeatThread).start()
         srv = config.get('server', 'localhost:5000').split(':')
+        ready.set()
         self._app.run(host=srv[0], port=srv[1])
+
 
     def _flaskAppResultFeatThread(self):
         while True:
             res = self._interprocq.get()
+            self._lock.acquire()
             self._currentresult = res
+            self._lock.release()
 
 
 class FlaskResultSink:
@@ -74,15 +79,17 @@ class FlaskResultSink:
         self._logger = logger
         self._config = config
         self._interprocq = Queue()
-        self._flaskproc = Process(target=FlaskApp().run, args=(self._interprocq, self._config))
-        self._flaskproc.daemon = True
+        readyflag = Event()
+        self._flaskproc = Process(target=FlaskApp().run, args=(self._config, self._interprocq, readyflag))
+        #self._flaskproc.daemon = True
         self._flaskproc.start()
+        readyflag.wait(timeout=5)
 
     def stop(self):
         """
         Stop flask app
         """
-        self._flaskproc.kill()
+        self._flaskproc.terminate()
 
     def pushDetectedObjectsFrame(self, frame: e.DetectedObjectsFrame):
         """

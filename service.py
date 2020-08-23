@@ -29,13 +29,13 @@ class Service:
 
     def _initfromconfig(self, config):
         modulesconfig = config['modules']
-
+        # Video sources
         self._cams = [VideoCapture(c['vsid'], c['uri'], self._logger) for c in config['cams']]
         self._logger.info(f"Video sources: {[f'{c.vsid}:{c.uri}' for c in self._cams]}")
-
+        # Result subscriber
         self._detectionResultSubscriber = getattr(__import__(config['resultsink']['module']), config['resultsink']['class'])(modulesconfig.get(config['resultsink']['class'], None), self._logger)
         self._logger.info(f'Initialize result subscriber: {type(self._detectionResultSubscriber).__name__}')
-
+        # Neural network
         nn = getattr(__import__(config['nn']['module']), config['nn']['class'])(modulesconfig.get(config['nn']['class'], None), self._logger)
         self._logger.info(f'Initialize neural network: {type(nn).__name__}')
         self._objDetector = ObjectDetector(nn, self._logger)

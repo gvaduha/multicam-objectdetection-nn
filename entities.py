@@ -6,6 +6,7 @@ structures to hold domain objects
 from typing import List
 import datetime
 import json
+import numpy as np
 
 class EntityTag:
     """
@@ -18,6 +19,10 @@ class EntitiesJsonSerializer(json.JSONEncoder):
     but mostly for shitty python datetime support
     """
     def default(self, o):
+        if isinstance(o, (float)):
+            return round(o, 2)
+        if isinstance(o, (np.float32)):
+            return round(float(o), 2)
         if isinstance(o, EntityTag):
             return o.__dict__
         if isinstance(o, (datetime.date, datetime.datetime)):

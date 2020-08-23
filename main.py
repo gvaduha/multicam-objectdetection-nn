@@ -21,7 +21,7 @@ sigstop = False
 def stopProcess():
     global svc
     global sigstop
-    print('Stopping...')
+    print('Application stopping by stop signal...')
     if svc:
         svc.stop()
     sigstop = True

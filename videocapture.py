@@ -55,6 +55,8 @@ class VideoCapture:
             self._stopping = True
             self._started = False
             self._grabbed = False
+            self._capture.release()
+            self._capture = None
 
     def _captureLoop(self):
         while not self._stopping:
