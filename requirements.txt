@@ -52,8 +52,10 @@ tensorflow-estimator==1.15.1
 termcolor==1.1.0
 tifffile==2020.8.13
 toml==0.10.1
-torch==1.6.0+cpu
-torchvision==0.7.0+cpu
+torch==1.6.0
+torchvision==0.7.0
+#torch==1.6.0+cpu
+#torchvision==0.7.0+cpu
 typed-ast==1.4.1
 Werkzeug==1.0.1
 wheel==0.35.1

@@ -1,13 +1,12 @@
 """
 Object detector facade module. Run object detection in NN
 """
-# pylint: disable=C0103,C0301,W0703
+# pylint: disable=C0103,C0301,W0703,R0903
 
 #import numpy as np
 from threading import Thread, Event, Lock
 from typing import List
 import datetime as dt
-import time
 import copy
 import queue as q
 import entities as e
@@ -51,7 +50,7 @@ class ObjectDetector:
     def _detectObjectsLoop(self):
         while not self._stopSignal:
             try:
-                frame = self._frames.get(block = False)
+                frame = self._frames.get(block=False)
                 if isinstance(frame, QueueSeparator):
                     self._imgSetEnded.set()
                     continue
