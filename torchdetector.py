@@ -62,16 +62,4 @@ class TorchDetector:
 
         result = zip(classes, scores, boxes)
 
-        #dobjs: List[e.DetectedObject] = []
-
-        #for c, s, bb in result:
-        #    if s < self._threshold:
-        #        break
-        #    dobjs.append(e.DetectedObject(int(c), float(s),
-        #                                  e.BoundingBox(int(bb[0]*height), int(bb[1]*width), int(bb[2]*height), int(bb[3]*width))))
-
-        #return dobjs
-        height = img.shape[0]
-        width = img.shape[1]
-
-        return ObjectDetector.getDetectedObjectsCollection(result, height, width, self._threshold)
+        return ObjectDetector.getDetectedObjectsCollection(result, 1, 1, self._threshold)

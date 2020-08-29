@@ -4,8 +4,8 @@
     "class": "TorchDetector"
   },
   "resultsink": {
-    "module": "fileresultsink",
-    "class": "WriteJsonResultSink"
+    "module": "webservice",
+    "class": "FlaskResultSink"
   },
   "runintervalsec": 1.0,
   "modules": {

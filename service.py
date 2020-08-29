@@ -24,7 +24,7 @@ class Service:
         self._detectorFree = True
         self._logger = logger
         self._initfromconfig(config)
-        self._mainthread = threading.Thread(target=self._mainLoop)
+        self._mainthread = threading.Thread(target=self._mainLoop, name='service')
         self._mainthread.start()
 
     def _initfromconfig(self, config):
@@ -43,7 +43,7 @@ class Service:
         self._runinterval = config['runintervalsec']
         self._logger.info(f"Service processing interval: {self._runinterval} sec")
 
-        _ = [threading.Thread(target=c.start, args=()).start() for c in self._cams]
+        _ = [threading.Thread(target=c.start, name=f'vsid-{c.vsid}', args=()).start() for c in self._cams]
 
     def stop(self):
         """
@@ -77,7 +77,7 @@ class Service:
                 self._objDetector.pushImage(frame)
             else:
                 c = VideoCapture(c.vsid, c.uri, self._logger)
-                threading.Thread(target=c.start, args=()).start()
+                threading.Thread(target=c.start, name=f'vsid-{c.vsid}', args=()).start()
 
         dset = self._objDetector.getDetectedObjectsFrame()
         self._detectionResultSubscriber.pushDetectedObjectsFrame(dset)
