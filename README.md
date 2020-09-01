@@ -62,6 +62,46 @@ Available implementations:
 ```
 
 # Config
-[Example](config.json)
+[Full example](config.json)
 
+##Main
+```
+  "runintervalsec": 1.0
+```
+
+##Modules config
 Pluggable modules gets config tree under "modules"/"modulename" upon __init__
+
+  ```
+  "modules": {
+    "WriteJsonResultSink": {
+      "file": "./results.log"
+    },
+    "FlaskResultSink": {
+      "server": "0.0.0.0:5555"
+    },
+    "TensorFlowDetector": {
+      "model": "models/tf.model",
+      "threshold": 0.1
+    },
+    "TorchDetector": {
+      "model": "models/torch.model",
+      "threshold": 0.1,
+      "device": "cpu"
+    }
+  },
+  ```
+  
+  ##Cams config
+  ```
+  "cams": [
+    {
+      "vsid": 1,
+      "uri": "rtsp://admin:admin@cam1/h264"
+    },
+    {
+      "vsid": 2,
+      "uri": "rtsp://admin:admin@cam2"
+    }
+  ]
+  ```
