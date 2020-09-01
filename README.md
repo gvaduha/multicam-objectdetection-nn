@@ -64,12 +64,12 @@ Available implementations:
 # Config
 [Full example](config.json)
 
-##Main
+## Main
 ```
   "runintervalsec": 1.0
 ```
 
-##Modules config
+## Modules config
 Pluggable modules gets config tree under "modules"/"modulename" upon __init__
 
   ```
@@ -92,7 +92,7 @@ Pluggable modules gets config tree under "modules"/"modulename" upon __init__
   },
   ```
   
-  ##Cams config
+  ## Cams config
   ```
   "cams": [
     {
