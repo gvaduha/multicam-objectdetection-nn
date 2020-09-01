@@ -49,6 +49,8 @@ Available implementations:
     "class": "FlaskResultSink"
   },
 
+  serving results @ /currentresult
+
 # Config
 [Example](config.json)
 
