@@ -15,6 +15,7 @@ import entities as e
 class EndpointAction:
     """
     Endpoint wrapper
+    Serving results @ /currentresult
     """
     def __init__(self, action):
         self._action = action
