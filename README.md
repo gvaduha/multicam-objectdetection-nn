@@ -57,9 +57,9 @@ Available implementations:
     "module": "webservice",
     "class": "FlaskResultSink"
   },
-```
 
   serving results @ /currentresult
+```
 
 # Config
 [Example](config.json)
