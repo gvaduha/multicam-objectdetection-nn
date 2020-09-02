@@ -44,9 +44,15 @@ class TorchDetector:
         """
         Implementation of detector interface
         """
-        _pretransform = A.Compose([A.Resize(800, 1600),
+        wsize = 1600
+        hsize = 800
+        _pretransform = A.Compose([A.Resize(hsize, wsize),
                                    A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
                                    ToTensorV2(),])
+
+        h, w, _ = img.shape
+        xscale = w / wsize
+        yscale = h / hsize
 
         image_tensor = _pretransform(image=img)['image']
 
@@ -62,4 +68,4 @@ class TorchDetector:
 
         result = zip(classes, scores, boxes)
 
-        return ObjectDetector.getDetectedObjectsCollection(result, 1, 1, self._threshold)
+        return ObjectDetector.getDetectedObjectsCollection(result, yscale, xscale, self._threshold)

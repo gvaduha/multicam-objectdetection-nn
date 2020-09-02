@@ -17,7 +17,7 @@ Ignored classes to hide from display
 """
 UpdateDetectionDataInterval = 1.0
 MinScore = 0.5
-IgnoreClasses = [5]
+IgnoreClasses = [6,7]
 
 class Program:
     def __init__(self):
