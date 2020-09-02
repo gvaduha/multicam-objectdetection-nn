@@ -6,6 +6,11 @@
 Online multicam object detection mini framework. Currently doesn't have an object tracker and supposed it is an external component aggregating detection results from group of detection servers. Started as a tool to test and measure different object detection neural networks, capturing set of cameras in the fashion of "process all images at time point".
 Tool has pluggable design. Capture done with opencv, classes for NN under test and result processor could be substituted via config.json 
 
+# How to run
+Main service entry is main.py. It runs without argumets.
+
+GUI test application is test-cli-main.py. You have to specify camera (or other video source) uri and uri where service provides detection data on.
+
 # Pluggable classes
 ## Neural network class interface
 * def __init__(self, config, logger):
@@ -86,7 +91,7 @@ Pluggable modules gets config tree under "modules"/"modulename" upon __init__
     "TorchDetector": {
       "model": "models/torch.model",
       "threshold": 0.1,
-      "device": "cpu"
+      "device": "gpu"
     }
   },
   ```

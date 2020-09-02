@@ -23,7 +23,7 @@
     "TorchDetector": {
       "model": "models/torch.model",
       "threshold": 0.1,
-      "device": "cpu"
+      "device": "cuda"
     }
   },
   "cams": [

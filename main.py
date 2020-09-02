@@ -66,7 +66,7 @@ def main():
 
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(threadName)s %(relativeCreated)6d %(message)s')
-    loghdlr = logging.handlers.RotatingFileHandler('multicam-nn-processing.log', maxBytes=1024*1024*50, backupCount=5)
+    loghdlr = logging.handlers.RotatingFileHandler('multicam-objectdetection-nn.log', maxBytes=1024*1024*50, backupCount=5)
     logger = logging.getLogger('')
     logger.addHandler(loghdlr)
     logger.info('Execution started')
