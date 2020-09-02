@@ -15,7 +15,6 @@ import entities as e
 class EndpointAction:
     """
     Endpoint wrapper
-    Serving results @ /currentresult
     """
     def __init__(self, action):
         self._action = action
@@ -55,7 +54,7 @@ class FlaskApp:
         """
         self._app = Flask(type(self).__name__)
         self._app.use_reloader = False # to not run on main thread
-        self.addEndpoint('/currentresult', self._resultep)
+        self.addEndpoint(config['resultep'], self._resultep)
         self._interprocq = queue
         self._lock = threading.Lock()
         threading.Thread(target=self._flaskAppResultFeatThread).start()

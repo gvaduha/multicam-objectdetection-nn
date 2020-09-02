@@ -57,8 +57,6 @@ Available implementations:
     "module": "webservice",
     "class": "FlaskResultSink"
   },
-
-  serving results @ /currentresult
 ```
 
 # Config
@@ -78,7 +76,8 @@ Pluggable modules gets config tree under "modules"/"modulename" upon __init__
       "file": "./results.log"
     },
     "FlaskResultSink": {
-      "server": "0.0.0.0:5555"
+      "server": "0.0.0.0:5555",
+      "resultep": "/currentresult"
     },
     "TensorFlowDetector": {
       "model": "models/tf.model",
