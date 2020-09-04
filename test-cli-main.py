@@ -81,9 +81,7 @@ class Program:
                         clr = self._getColor(c)
                         ih,iw, _ = img.shape
                         wndrect = cv2.getWindowImageRect(wndname)
-                        #print(ih,iw,wndrect)
-                        print(p1, p2)
-                        cv2.resizeWindow(wndname, iw, ih)
+                        #cv2.resizeWindow(wndname, iw, ih)
                         #cv2.rectangle(img, (l, t), (r, b), (r,g,b))
                         cv2.rectangle(img, p1, p2, clr, 2)
                         cv2.putText(img, f'c:{c},s:{s}', p1, cv2.FONT_HERSHEY_SIMPLEX, 0.7, clr, 1)
