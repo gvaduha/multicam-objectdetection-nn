@@ -67,6 +67,7 @@ class TorchDetector:
         h, w, _ = img.shape
         wscale = w / wsize
         hscale = h / hsize
-        print(f'h,w:{h},{w}; wsc,hsc:{wscale},{hscale}')
+        #print(f'h,w:{h},{w}; wsc,hsc:{wscale},{hscale}')
+        #print(list(result))
 
-        return ObjectDetector.getDetectedObjectsCollection(result, h*hscale, w*wscale, self._threshold)
+        return ObjectDetector.getDetectedObjectsCollection(result, hscale, wscale, self._threshold, False)

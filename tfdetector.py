@@ -53,7 +53,6 @@ class TensorFlowDetector:
         Implementation of detector interface
         """
         h, w, _ = img.shape
-        img = img[:, :, [2, 1, 0]]  # BGR2RGB
 
         tstart = time.time()
 

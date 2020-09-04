@@ -56,7 +56,8 @@ class ObjectDetector:
                     continue
                 self._imgSetEnded.clear()
                 self._logger.debug(f'Infer from vsid:{frame.vsid}')
-                dobjs = self._realnn.detectObjects(frame.img)
+                rgbimg = frame.img[:, :, [2, 1, 0]]  # BGR2RGB
+                dobjs = self._realnn.detectObjects(rgbimg)
                 doset = e.DetectedObjectSet(frame.vsid, frame.timestamp, dobjs)
                 self._lock.acquire()
                 self._detectedObjectSets.append(doset)
@@ -90,20 +91,25 @@ class ObjectDetector:
         return doframe
 
     @staticmethod
-    def getDetectedObjectsCollection(nnout, height, width, threshold) -> List[e.DetectedObject]:
+    def getDetectedObjectsCollection(nnout, hscale, wscale, threshold, tlbr=True) -> List[e.DetectedObject]:
         """
         Static helper
         Transforms network output to DetectedObject list
         nnout should be: (classes, scores, bboxes)
-        NOTE! boxes have to be in (t,l,b,r) coordinates
+        NOTE! by default boxes have to be in (t,l,b,r) coordinate sequence
+              if they're not set tlbr=False and parse as (l,t,r,b)
         """
         dobjs: List[e.DetectedObject] = []
 
         for c, s, bb in nnout:
             if s < threshold:
                 break
-            # transform (l,t,b,r) -> (t,l,r,b)
-            bbox = e.BoundingBox(int(bb[1]*width), int(bb[0]*height), int(bb[3]*width), int(bb[2]*height))
+            if tlbr:
+                # transform (l,t,b,r) -> (t,l,r,b)
+                bbox = e.BoundingBox(int(bb[1]*hscale), int(bb[0]*wscale), int(bb[3]*hscale), int(bb[2]*wscale))
+            else:
+                # transform (t,l,r,b) -> (t,l,r,b)
+                bbox = e.BoundingBox(int(bb[0]*wscale), int(bb[1]*hscale), int(bb[2]*wscale), int(bb[3]*hscale))
             dobjs.append(e.DetectedObject(int(c), round(float(s), 2), bbox))
 
         return dobjs
