@@ -1,4 +1,5 @@
 {
+  "logfile": "/var/log/multicam-objectdetection-nn.log",
   "nn": {
     "module": "torchdetector",
     "class": "TorchDetector"
