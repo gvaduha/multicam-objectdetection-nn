@@ -52,18 +52,17 @@ class TensorFlowDetector:
         """
         Implementation of detector interface
         """
-        height = img.shape[0]
-        width = img.shape[1]
+        h, w, _ = img.shape
         img = img[:, :, [2, 1, 0]]  # BGR2RGB
 
         tstart = time.time()
 
         (boxes, scores, classes, _) = self._session.run(
             [self._boxes, self._scores, self._classes, self._num_detections],
-            feed_dict={self._image_tensor: img.reshape(1, height, width, 3)})
+            feed_dict={self._image_tensor: img.reshape(1, h, w, 3)})
 
         self._logger.debug(f'TF model inferring time: {time.time() - tstart}')
 
         result = zip(classes[0], scores[0], boxes[0])
 
-        return ObjectDetector.getDetectedObjectsCollection(result, height, width, self._threshold)
+        return ObjectDetector.getDetectedObjectsCollection(result, h, w, self._threshold)

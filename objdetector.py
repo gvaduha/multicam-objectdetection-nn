@@ -94,14 +94,16 @@ class ObjectDetector:
         """
         Static helper
         Transforms network output to DetectedObject list
-        nnout should be: (class, score, bbox)
+        nnout should be: (classes, scores, bboxes)
+        NOTE! boxes have to be in (t,l,b,r) coordinates
         """
         dobjs: List[e.DetectedObject] = []
 
         for c, s, bb in nnout:
             if s < threshold:
                 break
-            dobjs.append(e.DetectedObject(int(c), round(float(s), 2),
-                                          e.BoundingBox(int(bb[0]*height), int(bb[1]*width), int(bb[2]*height), int(bb[3]*width))))
+            # transform (l,t,b,r) -> (t,l,r,b)
+            bbox = e.BoundingBox(int(bb[1]*width), int(bb[0]*height), int(bb[3]*width), int(bb[2]*height))
+            dobjs.append(e.DetectedObject(int(c), round(float(s), 2), bbox))
 
         return dobjs

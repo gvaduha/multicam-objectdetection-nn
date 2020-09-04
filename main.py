@@ -62,17 +62,17 @@ def main():
     global svc
     global sigstop
 
-    sys.excepthook = unhandledExceptionHandler
+    with open('config.json') as cfgfile:
+        config = json.load(cfgfile)
 
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(threadName)s %(relativeCreated)6d %(message)s')
-    loghdlr = logging.handlers.RotatingFileHandler('multicam-objectdetection-nn.log', maxBytes=1024*1024*50, backupCount=5)
+    loghdlr = logging.handlers.RotatingFileHandler(config['logfile'], maxBytes=1024*1024*50, backupCount=5)
     logger = logging.getLogger('')
     logger.addHandler(loghdlr)
     logger.info('Execution started')
 
-    with open('config.json') as cfgfile:
-        config = json.load(cfgfile)
+    sys.excepthook = unhandledExceptionHandler
 
     print('Initializing...')
     svc = s.Service(config, logger)

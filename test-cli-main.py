@@ -16,7 +16,7 @@ Minimal object score to display box
 Ignored classes to hide from display
 """
 UpdateDetectionDataInterval = 1.0
-MinScore = 0.5
+MinScore = 0.3
 IgnoreClasses = [6,7]
 
 class Program:
@@ -67,21 +67,31 @@ class Program:
         print(f'Capturing {vsuri} with data from {datauri}')
         try:
             self._getCurrentObjects(vsid, datauri)
+            wndname = f'**ESC to STOP** [{vsuri}] '
+            cv2.namedWindow(wndname, cv2.WINDOW_NORMAL)
             cam = cv2.VideoCapture(vsuri)
             while True:
                 ret, img = cam.read()
-                self._lock.acquire()
-                objs = self._currentObjects.copy()
-                self._lock.release()
-                for o in objs:
-                    c, s, p1, p2 = o
-                    clr = self._getColor(c)
-                    cv2.rectangle(img, p1, p2, clr, 2)
-                    cv2.putText(img, f'c:{c},s:{s}', p1, cv2.FONT_HERSHEY_SIMPLEX, 0.7, clr, 1)
-                cv2.imshow(f'**ESC to STOP** [{vsuri}] ', img)
-                if cv2.waitKey(1) == 27:
-                    break
+                if ret:
+                    self._lock.acquire()
+                    objs = self._currentObjects.copy()
+                    self._lock.release()
+                    for o in objs:
+                        c, s, p1, p2 = o
+                        clr = self._getColor(c)
+                        ih,iw, _ = img.shape
+                        wndrect = cv2.getWindowImageRect(wndname)
+                        #print(ih,iw,wndrect)
+                        print(p1, p2)
+                        cv2.resizeWindow(wndname, iw, ih)
+                        #cv2.rectangle(img, (l, t), (r, b), (r,g,b))
+                        cv2.rectangle(img, p1, p2, clr, 2)
+                        cv2.putText(img, f'c:{c},s:{s}', p1, cv2.FONT_HERSHEY_SIMPLEX, 0.7, clr, 1)
+                    cv2.imshow(wndname, img)
+                    if cv2.waitKey(1) == 27:
+                        break
 
+            cam.release()
             cv2.destroyAllWindows()
         except Exception as e:
             print(e)

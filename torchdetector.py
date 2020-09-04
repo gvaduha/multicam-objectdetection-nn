@@ -50,10 +50,6 @@ class TorchDetector:
                                    A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
                                    ToTensorV2(),])
 
-        h, w, _ = img.shape
-        xscale = w / wsize
-        yscale = h / hsize
-
         image_tensor = _pretransform(image=img)['image']
 
         tstart = time.time()
@@ -68,4 +64,9 @@ class TorchDetector:
 
         result = zip(classes, scores, boxes)
 
-        return ObjectDetector.getDetectedObjectsCollection(result, yscale, xscale, self._threshold)
+        h, w, _ = img.shape
+        wscale = w / wsize
+        hscale = h / hsize
+        print(f'h,w:{h},{w}; wsc,hsc:{wscale},{hscale}')
+
+        return ObjectDetector.getDetectedObjectsCollection(result, h*hscale, w*wscale, self._threshold)
